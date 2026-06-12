@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Identity/">
+    <Project Path="src/Identity/Rai.Identity.csproj" />
+  </Folder>
+  <Folder Name="/src/IntegrationHub/">
+    <Project Path="src/IntegrationHub/Rai.IntegrationHub.csproj" />
+  </Folder>
+  <Folder Name="/src/Mocks/" />
+  <Folder Name="/src/Mocks/CrmService/">
+    <Project Path="src/Mocks/CrmService/Rai.Mocks.CrmService.csproj" />
+  </Folder>
+  <Folder Name="/src/Mocks/TicketingService/">
+    <Project Path="src/Mocks/TicketingService/Rai.Mocks.TicketingService.csproj" />
+  </Folder>
+  <Folder Name="/src/Shared/">
+    <Project Path="src/Shared/Rai.Shared.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Rai.Tests.csproj" />
+  </Folder>
+</Solution>

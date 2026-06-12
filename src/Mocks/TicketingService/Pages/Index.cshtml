@@ -1,0 +1,44 @@
+@page
+@model Rai.Mocks.TicketingService.Pages.IndexModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Ticketing Service — RAI Amsterdam</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        h1 { color: #1a1a2e; }
+        .user-info { background: #e8f4fd; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: .5rem; border-bottom: 1px solid #ddd; }
+        .badge { background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-size: .8rem; }
+    </style>
+</head>
+<body>
+    <h1>Ticketing Service</h1>
+
+    <div class="user-info">
+        <strong>Signed in as:</strong> @Model.UserName
+        <span class="badge">SSO — no second login required</span>
+    </div>
+
+    <p>Tickets are created automatically when the Integration Hub delivers a <code>crm.contact.created</code> event.</p>
+
+    <table>
+        <thead><tr><th>Title</th><th>Created at</th><th>Source event</th></tr></thead>
+        <tbody>
+        @foreach (var t in Model.Tickets)
+        {
+            <tr>
+                <td>@t.Title</td>
+                <td>@t.CreatedAt.ToString("u")</td>
+                <td><code>@t.SourceEventId</code></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</body>
+</html>

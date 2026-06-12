@@ -1,0 +1,53 @@
+@page
+@model Rai.Mocks.CrmService.Pages.IndexModel
+@{
+    ViewData["Title"] = "CRM Service";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>CRM Service — RAI Amsterdam</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        h1 { color: #1a1a2e; }
+        .user-info { background: #e8f4fd; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; }
+        form input, form button { padding: .5rem .75rem; margin-right: .5rem; border: 1px solid #ccc; border-radius: 4px; }
+        form button { background: #0066cc; color: white; border-color: #0066cc; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: .5rem; border-bottom: 1px solid #ddd; }
+        .badge { background: #28a745; color: white; padding: 2px 8px; border-radius: 10px; font-size: .8rem; }
+    </style>
+</head>
+<body>
+    <h1>CRM Service</h1>
+
+    <div class="user-info">
+        <strong>Signed in as:</strong> @Model.UserName
+        <span class="badge">SSO — no second login required</span>
+    </div>
+
+    <h2>Create contact</h2>
+    <form method="post">
+        <input name="name" placeholder="Name" required />
+        <input name="email" placeholder="Email" type="email" />
+        <button type="submit">Create contact</button>
+    </form>
+    @if (!string.IsNullOrEmpty(Model.LastCreated))
+    {
+        <p style="color:green">Created: @Model.LastCreated — webhook fired to Integration Hub</p>
+    }
+
+    <h2 style="margin-top:2rem">Contacts</h2>
+    <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Created at</th></tr></thead>
+        <tbody>
+        @foreach (var c in Model.Contacts)
+        {
+            <tr><td>@c.Name</td><td>@c.Email</td><td>@c.CreatedAt.ToString("u")</td></tr>
+        }
+        </tbody>
+    </table>
+</body>
+</html>

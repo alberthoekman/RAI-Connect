@@ -1,0 +1,43 @@
+@page
+@model Rai.Identity.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Sign in — RAI Amsterdam";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.12); width: 360px; }
+        h1 { font-size: 1.4rem; margin-bottom: 1.5rem; color: #1a1a2e; }
+        label { display: block; margin-bottom: .25rem; font-size: .875rem; color: #555; }
+        input[type=text], input[type=password] { width: 100%; box-sizing: border-box; padding: .5rem .75rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; margin-bottom: 1rem; }
+        button { width: 100%; padding: .6rem; background: #0066cc; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
+        button:hover { background: #0052a3; }
+        .error { color: #c0392b; font-size: .875rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>RAI Amsterdam — Sign in</h1>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <p class="error">@Model.ErrorMessage</p>
+    }
+
+    <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <label asp-for="Input.Email">E-mail</label>
+        <input type="text" asp-for="Input.Email" autocomplete="username" />
+        <label asp-for="Input.Password">Password</label>
+        <input type="password" asp-for="Input.Password" autocomplete="current-password" />
+        <button type="submit">Sign in</button>
+    </form>
+</div>
+</body>
+</html>
