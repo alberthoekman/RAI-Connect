@@ -18,17 +18,29 @@
         input[type=text], input[type=password] { width: 100%; box-sizing: border-box; padding: .5rem .75rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; margin-bottom: 1rem; }
         button { width: 100%; padding: .6rem; background: #0066cc; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
         button:hover { background: #0052a3; }
-        .error { color: #c0392b; font-size: .875rem; margin-bottom: 1rem; }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; justify-content: center; align-items: center; }
+        .modal-overlay.visible { display: flex; }
+        .modal { background: white; border-radius: 8px; padding: 1.5rem 2rem; max-width: 320px; width: 90%; box-shadow: 0 4px 20px rgba(0,0,0,.25); text-align: center; }
+        .modal h2 { margin: 0 0 .75rem; font-size: 1rem; color: #c0392b; }
+        .modal p { margin: 0 0 1.25rem; font-size: .9rem; color: #333; }
+        .modal button { width: auto; padding: .4rem 1.5rem; font-size: .9rem; }
     </style>
 </head>
 <body>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="modal-overlay visible" id="errorModal">
+        <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="modalTitle">
+            <h2 id="modalTitle">Sign-in failed</h2>
+            <p>@Model.ErrorMessage</p>
+            <button type="button" onclick="document.getElementById('errorModal').classList.remove('visible')">OK</button>
+        </div>
+    </div>
+}
+
 <div class="card">
     <h1>RAI Amsterdam — Sign in</h1>
-
-    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-    {
-        <p class="error">@Model.ErrorMessage</p>
-    }
 
     <form method="post">
         <input type="hidden" asp-for="ReturnUrl" />
