@@ -26,7 +26,13 @@ builder.Services
     })
     .AddOpenIdConnect(o =>
     {
-        o.Authority = builder.Configuration["Oidc:Authority"] ?? "http://localhost:5100";
+        var authority = builder.Configuration["Oidc:Authority"] ?? "http://localhost:5100";
+        var metadataAddress = builder.Configuration["Oidc:MetadataAddress"];
+
+        o.Authority = authority;
+        if (!string.IsNullOrEmpty(metadataAddress))
+            o.MetadataAddress = metadataAddress;
+
         o.ClientId = "ticketing-service";
         o.ClientSecret = builder.Configuration["Oidc:TicketingClientSecret"] ?? "ticketing-secret-change-in-prod";
         o.ResponseType = OpenIdConnectResponseType.Code;
@@ -38,6 +44,26 @@ builder.Services
         o.Scope.Add("profile");
         o.Scope.Add("email");
         o.Scope.Add("offline_access");
+
+        if (!string.IsNullOrEmpty(metadataAddress))
+        {
+            var internalBase = new Uri(metadataAddress).GetLeftPart(UriPartial.Authority);
+            o.Events = new Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectEvents
+            {
+                OnRedirectToIdentityProvider = ctx =>
+                {
+                    ctx.ProtocolMessage.IssuerAddress = ctx.ProtocolMessage.IssuerAddress
+                        .Replace(internalBase, authority.TrimEnd('/'));
+                    return Task.CompletedTask;
+                },
+                OnRedirectToIdentityProviderForSignOut = ctx =>
+                {
+                    ctx.ProtocolMessage.IssuerAddress = ctx.ProtocolMessage.IssuerAddress
+                        .Replace(internalBase, authority.TrimEnd('/'));
+                    return Task.CompletedTask;
+                },
+            };
+        }
     });
 
 // ------------------------------------------------------------------

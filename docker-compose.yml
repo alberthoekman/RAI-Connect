@@ -78,10 +78,8 @@ services:
     environment:
       ASPNETCORE_URLS: http://+:5300
       ASPNETCORE_ENVIRONMENT: Production
-      # host.docker.internal resolves to the Docker host on macOS; metadata fetched here
-      # returns issuer=http://localhost:5100 (fixed via Identity:Issuer), so token
-      # validation passes even though the browser used localhost:5100 for auth.
-      Oidc__Authority: http://host.docker.internal:5100
+      Oidc__Authority: http://localhost:5100
+      Oidc__MetadataAddress: http://identity:5100/.well-known/openid-configuration
       Oidc__CrmClientSecret: ${Oidc__CrmClientSecret:-crm-secret-change-in-prod}
       Crm__HmacSecret: ${Crm__HmacSecret:-shared-hmac-secret-change-in-prod}
       Crm__HubWebhookUrl: http://hub:5200/api/webhooks/crm
@@ -105,7 +103,8 @@ services:
     environment:
       ASPNETCORE_URLS: http://+:5400
       ASPNETCORE_ENVIRONMENT: Production
-      Oidc__Authority: http://host.docker.internal:5100
+      Oidc__Authority: http://localhost:5100
+      Oidc__MetadataAddress: http://identity:5100/.well-known/openid-configuration
       Oidc__TicketingClientSecret: ${Oidc__TicketingClientSecret:-ticketing-secret-change-in-prod}
       Ticketing__HmacSecret: ${Ticketing__HmacSecret:-shared-hmac-secret-change-in-prod}
     depends_on:

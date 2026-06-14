@@ -25,7 +25,13 @@ builder.Services
     })
     .AddOpenIdConnect(o =>
     {
-        o.Authority = builder.Configuration["Oidc:Authority"] ?? "http://localhost:5100";
+        var authority = builder.Configuration["Oidc:Authority"] ?? "http://localhost:5100";
+        var metadataAddress = builder.Configuration["Oidc:MetadataAddress"];
+
+        o.Authority = authority;
+        if (!string.IsNullOrEmpty(metadataAddress))
+            o.MetadataAddress = metadataAddress;
+
         o.ClientId = "crm-service";
         o.ClientSecret = builder.Configuration["Oidc:CrmClientSecret"] ?? "crm-secret-change-in-prod";
         o.ResponseType = OpenIdConnectResponseType.Code;
@@ -39,6 +45,29 @@ builder.Services
         o.Scope.Add("offline_access");
         o.Scope.Add("roles");
         o.Scope.Add("permissions");
+
+        // When metadata is fetched from an internal Docker hostname, the discovery document
+        // returns endpoint URIs based on that internal host. Rewrite them to the public
+        // authority before the browser is redirected, so the browser sees localhost URLs.
+        if (!string.IsNullOrEmpty(metadataAddress))
+        {
+            var internalBase = new Uri(metadataAddress).GetLeftPart(UriPartial.Authority);
+            o.Events = new Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectEvents
+            {
+                OnRedirectToIdentityProvider = ctx =>
+                {
+                    ctx.ProtocolMessage.IssuerAddress = ctx.ProtocolMessage.IssuerAddress
+                        .Replace(internalBase, authority.TrimEnd('/'));
+                    return Task.CompletedTask;
+                },
+                OnRedirectToIdentityProviderForSignOut = ctx =>
+                {
+                    ctx.ProtocolMessage.IssuerAddress = ctx.ProtocolMessage.IssuerAddress
+                        .Replace(internalBase, authority.TrimEnd('/'));
+                    return Task.CompletedTask;
+                },
+            };
+        }
     });
 
 // ------------------------------------------------------------------
