@@ -14,9 +14,10 @@ async function request<T>(
     },
   });
   if (!res.ok) {
-    const text = await res.text().catch(() => res.statusText);
-    throw new Error(`${res.status}: ${text}`);
+    const text = await res.text().catch(() => '');
+    throw new Error(`${res.status}: ${text || res.statusText}`);
   }
+  if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
 }
 

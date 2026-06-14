@@ -13,15 +13,18 @@ public sealed class UsersController(
     UserManager<ApplicationUser> userManager,
     RoleManager<ApplicationRole> roleManager) : ControllerBase
 {
-    /// <summary>Returns all users.</summary>
+    /// <summary>Returns all users with their assigned roles.</summary>
     [HttpGet, Authorize(Policy = AppPerms.UsersRead)]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        var users = userManager.Users.Select(u => new
+        var users = userManager.Users.ToList();
+        var result = new List<object>(users.Count);
+        foreach (var u in users)
         {
-            u.Id, u.Email, u.UserName, u.DisplayName,
-        }).ToList();
-        return Ok(users);
+            var roles = await userManager.GetRolesAsync(u);
+            result.Add(new { u.Id, u.Email, u.UserName, u.DisplayName, Roles = roles });
+        }
+        return Ok(result);
     }
 
     /// <summary>Returns a single user by id.</summary>

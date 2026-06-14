@@ -16,7 +16,8 @@ var connectionString = builder.Configuration.GetConnectionString("Hub");
 if (!string.IsNullOrWhiteSpace(connectionString))
 {
     builder.Services.AddDbContext<HubDbContext>(o =>
-        o.UseNpgsql(connectionString).ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
+        o.UseNpgsql(connectionString, npgsql => npgsql.EnableRetryOnFailure())
+         .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 }
 else
 {

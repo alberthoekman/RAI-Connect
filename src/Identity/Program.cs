@@ -23,7 +23,7 @@ var connectionString = builder.Configuration.GetConnectionString("Identity")
     ?? throw new InvalidOperationException("ConnectionStrings:Identity is required. Set it via env var or appsettings.");
 
 builder.Services.AddDbContext<IdentityDbContext>(o =>
-    o.UseNpgsql(connectionString)
+    o.UseNpgsql(connectionString, npgsql => npgsql.EnableRetryOnFailure())
      .UseOpenIddict()
      .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 

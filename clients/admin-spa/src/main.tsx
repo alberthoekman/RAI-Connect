@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { AuthProvider } from 'react-oidc-context';
 import { oidcConfig } from './authConfig';
 import App from './App';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

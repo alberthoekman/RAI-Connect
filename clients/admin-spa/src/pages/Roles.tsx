@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type SyntheticEvent } from 'react';
 import { useAuth } from 'react-oidc-context';
+import { Alert, Button, Card, Form, Row, Col } from 'react-bootstrap';
 import type { RoleDto, PermissionDto } from '../api';
 import {
   getRoles,
@@ -29,7 +30,7 @@ export default function RolesPage() {
 
   useEffect(() => { load(); }, []);
 
-  const handleCreateRole = async (e: React.FormEvent) => {
+  const handleCreateRole = async (e: SyntheticEvent) => {
     e.preventDefault();
     try {
       await createRole(newRoleName, token);
@@ -44,63 +45,68 @@ export default function RolesPage() {
     try {
       if (has) {
         await revokePermission(role.id, perm.id, token);
-        setMessage(`Revoked "${perm.name}" from "${role.name}".`);
+        setMessage(`Revoked "${perm.name}" from "${role.name}". Token refreshed — changes take effect immediately.`);
       } else {
         await grantPermission(role.id, perm.id, token);
-        setMessage(`Granted "${perm.name}" to "${role.name}".`);
+        setMessage(`Granted "${perm.name}" to "${role.name}". Token refreshed — changes take effect immediately.`);
       }
       await load();
-    } catch (e: any) { setError(e.message); }
+    } catch (e: any) { setError(e.message); return; }
+    // Refresh the access token so the new permission claims are present immediately.
+    auth.signinSilent().catch(() => {});
   };
-
-  const inputStyle: React.CSSProperties = { padding: '0.4rem', border: '1px solid #ccc', borderRadius: '4px', marginRight: '0.5rem' };
-  const btnStyle: React.CSSProperties = { padding: '0.4rem 0.8rem', background: '#0066cc', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' };
 
   return (
     <div>
-      <h2>Roles &amp; Permissions</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {message && <p style={{ color: 'green' }}>{message}</p>}
+      <h2 className="h5 mb-3">Roles &amp; Permissions</h2>
+      {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
+      {message && <Alert variant="success" dismissible onClose={() => setMessage('')}>{message}</Alert>}
 
-      <p style={{ fontSize: '0.875rem', color: '#555' }}>
+      <p className="text-muted small mb-3">
         Toggle a permission on a role to demonstrate live RBAC enforcement.
         After toggling, re-login (or wait for token refresh) and call the protected endpoint from the Users tab.
       </p>
 
       {roles.map(role => (
-        <div key={role.id} style={{ border: '1px solid #ddd', borderRadius: '6px', padding: '1rem', marginBottom: '1rem' }}>
-          <h3 style={{ margin: '0 0 0.75rem' }}>{role.name}</h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-            {permissions.map(perm => {
-              const has = role.permissions.some(p => p.id === perm.id);
-              return (
-                <button
-                  key={perm.id}
-                  onClick={() => togglePermission(role, perm)}
-                  title={perm.description ?? perm.name}
-                  style={{
-                    padding: '0.3rem 0.75rem',
-                    border: '1px solid',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    background: has ? '#d4edda' : '#f8f9fa',
-                    borderColor: has ? '#28a745' : '#ccc',
-                    color: has ? '#155724' : '#555',
-                  }}
-                >
-                  {has ? '+ ' : ''}{perm.name}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <Card key={role.id} className="mb-3">
+          <Card.Body>
+            <Card.Title>{role.name}</Card.Title>
+            <div className="d-flex flex-wrap gap-2">
+              {permissions.map(perm => {
+                const has = role.permissions.some(p => p.id === perm.id);
+                return (
+                  <Button
+                    key={perm.id}
+                    size="sm"
+                    variant={has ? 'success' : 'outline-secondary'}
+                    title={perm.description ?? perm.name}
+                    onClick={() => togglePermission(role, perm)}
+                  >
+                    {perm.name}
+                  </Button>
+                );
+              })}
+            </div>
+          </Card.Body>
+        </Card>
       ))}
 
-      <h3>Create role</h3>
-      <form onSubmit={handleCreateRole}>
-        <input style={inputStyle} placeholder="Role name" value={newRoleName} onChange={e => setNewRoleName(e.target.value)} required />
-        <button type="submit" style={btnStyle}>Create</button>
-      </form>
+      <h3 className="h6 mb-2">Create role</h3>
+      <Form onSubmit={handleCreateRole}>
+        <Row className="g-2 align-items-end">
+          <Col xs="auto">
+            <Form.Control
+              placeholder="Role name"
+              value={newRoleName}
+              onChange={e => setNewRoleName(e.target.value)}
+              required
+            />
+          </Col>
+          <Col xs="auto">
+            <Button type="submit" variant="primary">Create</Button>
+          </Col>
+        </Row>
+      </Form>
     </div>
   );
 }

@@ -17,6 +17,7 @@ services:
       retries: 10
 
   identity:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: docker/Dockerfile.identity
@@ -42,6 +43,7 @@ services:
       start_period: 20s
 
   hub:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: docker/Dockerfile.hub
@@ -67,6 +69,7 @@ services:
       start_period: 20s
 
   crm:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: docker/Dockerfile.crm
@@ -93,6 +96,7 @@ services:
       start_period: 30s
 
   ticketing:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: docker/Dockerfile.ticketing
@@ -115,6 +119,7 @@ services:
       start_period: 30s
 
   spa:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: docker/Dockerfile.spa
