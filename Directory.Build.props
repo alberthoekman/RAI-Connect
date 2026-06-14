@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- Workaround: dotnet watch on macOS constructs obj\Debug with backslash (SDK 10.0.300 bug) -->
+    <BaseIntermediateOutputPath>obj/</BaseIntermediateOutputPath>
+  </PropertyGroup>
+</Project>

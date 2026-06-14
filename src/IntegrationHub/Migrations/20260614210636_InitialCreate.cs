@@ -15,16 +15,16 @@ namespace Rai.IntegrationHub.Migrations
                 name: "OutboxMessages",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
-                    EventType = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Payload = table.Column<string>(type: "TEXT", nullable: false),
-                    TargetUrl = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false),
-                    AttemptCount = table.Column<int>(type: "INTEGER", nullable: false),
-                    NextAttemptAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
-                    LastAttemptAt = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
-                    LastError = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    EventType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Payload = table.Column<string>(type: "text", nullable: false),
+                    TargetUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    AttemptCount = table.Column<int>(type: "integer", nullable: false),
+                    NextAttemptAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LastAttemptAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LastError = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true)
                 },
                 constraints: table =>
                 {
